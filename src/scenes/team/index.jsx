@@ -82,12 +82,42 @@ const Team = () => {
     ];
   };
 
-  const [rows, setRows] = useState(getInitialRows);
+  const [rows, setRows] = useState([]);
 
-  // Guardar usuarios en localStorage cada vez que cambian
-  useEffect(() => {
-    localStorage.setItem("teamUsers", JSON.stringify(rows));
-  }, [rows]);
+useEffect(() => {
+  const stored = localStorage.getItem("teamUsers");
+  if (stored) {
+    try {
+      setRows(JSON.parse(stored));
+    } catch {
+      setRows([
+        {
+          id: 1,
+          primerNombre: "Juan",
+          segundoNombre: "",
+          apellido: "Perdomo",
+          age: "",
+          phone: "3134800728",
+          email: "admin@gmail.com",
+          access: "admin",
+        },
+      ]);
+    }
+  } else {
+    setRows([
+      {
+        id: 1,
+        primerNombre: "Juan",
+        segundoNombre: "",
+        apellido: "Perdomo",
+        age: "",
+        phone: "3134800728",
+        email: "admin@gmail.com",
+        access: "admin",
+      },
+    ]);
+  }
+}, []);
 
   const [editData, setEditData] = useState({});
 
