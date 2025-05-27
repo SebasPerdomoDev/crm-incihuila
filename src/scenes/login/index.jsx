@@ -1,22 +1,37 @@
-import React, { useState } from "react";
-import "./Login.css";
-import { Box, useTheme, Snackbar, Alert, IconButton, TextField } from "@mui/material";
-import { tokens } from "../../theme";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  useTheme,
+  Snackbar,
+  Alert,
+  IconButton
+} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { tokens } from "../../theme";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
 export default function Login() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  // Simulación de usuario "base de datos"
-  const USER = { email: "admin@gmail.com", password: "admin123" };
-
   const [form, setForm] = useState({ email: "", password: "" });
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
   const [showPassword, setShowPassword] = useState(false);
+
+  // Inicializar usuarios predeterminados en localStorage si no existen
+  useEffect(() => {
+    const existing = localStorage.getItem("teamUsers");
+    if (!existing) {
+      const defaultUsers = [
+        { email: "admin@gmail.com", password: "admin123" },
+        { email: "user@gmail.com", password: "user123" }
+      ];
+      localStorage.setItem("teamUsers", JSON.stringify(defaultUsers));
+    }
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,7 +39,6 @@ export default function Login() {
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
-  // Leer usuarios desde localStorage
   const getUsers = () => {
     const stored = localStorage.getItem("teamUsers");
     if (stored) {
@@ -68,7 +82,7 @@ export default function Login() {
       <Box
         className="login-card"
         sx={{
-          background: `${colors.primary[400]}`, // Fondo oscuro original
+          background: `${colors.primary[400]}`,
           color: colors.grey[100],
           borderRadius: 4,
           boxShadow: `0 4px 24px 0 ${colors.primary[900]}55`,
@@ -94,20 +108,11 @@ export default function Login() {
               height: 100,
               objectFit: "contain",
               borderRadius: "18px",
-              // sin sombra
             }}
           />
         </Box>
         <form className="login-form" onSubmit={handleSubmit}>
-          <label
-            className="login-label"
-            style={{
-              color: colors.grey[200],
-              fontWeight: 500,
-              marginBottom: 4,
-              display: "block",
-            }}
-          >
+          <label className="login-label" style={{ color: colors.grey[200], fontWeight: 500, marginBottom: 4 }}>
             Correo electrónico
           </label>
           <input
@@ -130,15 +135,7 @@ export default function Login() {
               outline: "none",
             }}
           />
-          <label
-            className="login-label"
-            style={{
-              color: colors.grey[200],
-              fontWeight: 500,
-              marginBottom: 4,
-              display: "block",
-            }}
-          >
+          <label className="login-label" style={{ color: colors.grey[200], fontWeight: 500, marginBottom: 4 }}>
             Contraseña
           </label>
           <div style={{ position: "relative", width: "100%", marginBottom: 24 }}>
@@ -166,8 +163,8 @@ export default function Login() {
               edge="end"
               sx={{
                 position: "absolute",
-                right: 24, // Más a la izquierda
-                top: "38%", // Más arriba
+                right: 24,
+                top: "38%",
                 transform: "translateY(-50%)",
                 color: colors.grey[300],
                 padding: 0,
@@ -187,8 +184,7 @@ export default function Login() {
               alignItems: "center",
               justifyContent: "center",
               gap: 1,
-              background:
-                "linear-gradient(90deg, #4cceac 0%, #6870fa 100%)",
+              background: "linear-gradient(90deg, #4cceac 0%, #6870fa 100%)",
               color: "white",
               px: 3,
               py: 1.5,
@@ -197,8 +193,7 @@ export default function Login() {
               boxShadow: "0px 4px 15px rgba(5, 5, 5, 0.6)",
               transition: "background 0.3s ease",
               "&:hover": {
-                background:
-                  "linear-gradient(90deg, #6870fa 0%, #4cceac 100%)",
+                background: "linear-gradient(90deg, #6870fa 0%, #4cceac 100%)",
               },
               userSelect: "none",
               fontSize: "1rem",
@@ -211,6 +206,7 @@ export default function Login() {
             Entrar
           </Box>
         </form>
+
         <Snackbar
           open={snackbar.open}
           autoHideDuration={2000}
